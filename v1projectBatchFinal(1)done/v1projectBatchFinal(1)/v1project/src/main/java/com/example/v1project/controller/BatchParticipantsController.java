@@ -1,8 +1,10 @@
 package com.example.v1project.controller;
 
 
+import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
 import com.example.v1project.service.BatchParticipantsService;
+import com.example.v1project.service.BatchServiceImpl;
 import com.example.v1project.utility.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +20,19 @@ public class BatchParticipantsController {
     @Autowired
     private BatchParticipantsService batchParticipantsService;
 
+    @Autowired
+    private BatchServiceImpl batchService;
+
     @GetMapping("/{batchId}")
-    public ResponseEntity<?> getParticipantsByBatchId(@PathVariable long batchId) {
+    public ResponseEntity<?> getParticipantsByBatchId(@PathVariable int batchId) {
         try {
-            List<Users> participants = batchParticipantsService.getParticipantsByBatchId(batchId);
-            return ResponseBuilder.buildResponse(200, "Success", null, participants);
+            Batches batch = batchService.getBatchById(batchId);
+            if (batch != null) {
+                List<Users> participants = batchParticipantsService.getParticipantsByBatchId(batchId);
+                return ResponseBuilder.buildResponse(200, "Success", null, participants);
+            } else {
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+            }
         } catch (Exception e){
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving participants", e.getMessage(), null);
         }
