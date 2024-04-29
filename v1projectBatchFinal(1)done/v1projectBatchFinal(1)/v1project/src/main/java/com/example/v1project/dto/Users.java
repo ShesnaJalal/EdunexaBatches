@@ -20,9 +20,9 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private long userId;
+    private int userId;
 
-    public Users(long userId) {
+    public Users(int userId) {
         this.userId = userId;
     }
 

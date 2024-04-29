@@ -12,8 +12,8 @@ public interface BatchParticipantsService {
     //    String deleteBatchParticipant(BatchParticipants batchParticipant); // New method
     void deleteParticipantFromBatch(long batchId, long userId);
     //    void addBatchParticipant(BatchParticipants batchParticipants);
-    void addBatchParticipant(long userId, long batchId);
-    void deleteParticipantsByBatchId(long batchId);
+    void addBatchParticipant(int userId, int batchId);
+    void deleteParticipantsByBatchId(int batchId);
 
 
 }

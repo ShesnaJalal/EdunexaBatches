@@ -20,7 +20,7 @@ public class BatchServiceImpl {
         return batchDao.findAll();
     }
 
-    public Batches getBatchById(long batchId) {
+    public Batches getBatchById(int batchId) {
         Optional<Batches> optionalBatch = batchDao.findById(batchId);
         return optionalBatch.orElse(null);
     }
@@ -35,7 +35,7 @@ public class BatchServiceImpl {
         return batchDao.save(batch);
     }
 
-    public void deleteBatchById(long batchId) {
+    public void deleteBatchById(int batchId) {
         batchDao.deleteById(batchId);
     }
 

@@ -52,14 +52,7 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
 
     @Override
     @Transactional
-    public void deleteParticipantsByBatchId(long batchId) {
-        // Implementation logic to delete participants by batch ID
-        batchParticipantsDao.deleteByBatchId(batchId);
-    }
-
-    @Override
-    @Transactional
-    public void addBatchParticipant(long userId, long batchId) {
+    public void addBatchParticipant(int userId, int batchId) {
         // Fetch Users and Batches entities from database
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
@@ -75,4 +68,13 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
         // Save BatchParticipants entity
         batchParticipantsDao.save(batchParticipants);
     }
+    @Override
+    @Transactional
+    public void deleteParticipantsByBatchId(int batchId) {
+        List<BatchParticipants> participants = batchParticipantsDao.findByBatches_BatchId(batchId);
+        for (BatchParticipants participant : participants) {
+            batchParticipantsDao.delete(participant);
+        }
+    }
+
 }

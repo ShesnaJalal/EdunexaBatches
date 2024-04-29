@@ -4,5 +4,5 @@ import com.example.v1project.dto.Users;
 
 
 
-public interface UsersDao  extends JpaRepository<Users, Long>{
+public interface UsersDao  extends JpaRepository<Users, Integer>{
 }
