@@ -17,9 +17,9 @@ public class Batches {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "batch_ID")
-    private int batchId;
+    private long batchId;
     // Constructor with batchId parameter
-    public Batches(int batchId) {
+    public Batches(long batchId) {
         this.batchId = batchId;
     }
     @Column(name = "batch_name", nullable = false, columnDefinition = "LONGTEXT")

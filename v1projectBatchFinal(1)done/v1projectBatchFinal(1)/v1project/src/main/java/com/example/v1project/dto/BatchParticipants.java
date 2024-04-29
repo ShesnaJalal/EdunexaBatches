@@ -14,7 +14,7 @@ public class BatchParticipants {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -24,7 +24,7 @@ public class BatchParticipants {
     @JoinColumn(name = "batch_id", nullable = false)
     private Batches batches;
 
-    public BatchParticipants(int userId, int batchId) {
+    public BatchParticipants(long userId, long batchId) {
         this.users = new Users(userId);
         this.batches = new Batches(batchId);
     }

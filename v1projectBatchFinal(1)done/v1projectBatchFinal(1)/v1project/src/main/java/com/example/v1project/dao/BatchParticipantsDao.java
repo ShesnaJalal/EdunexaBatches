@@ -11,4 +11,5 @@ public interface BatchParticipantsDao extends JpaRepository<BatchParticipants, L
     List<BatchParticipants> findByBatches_BatchId(long batchId);
     List<BatchParticipants> findByBatches_BatchIdAndUsers_UserId(long batchId, long userId);
     void deleteByBatches_BatchIdAndUsers_UserId(long batchId, long userId);
+    void deleteByBatchId(long batchId);
 }

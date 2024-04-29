@@ -63,22 +63,22 @@ public class BatchParticipantsController {
     }
 
     public static class BatchParticipantsRequest {
-        private int userId;
-        private int batchId;
+        private long userId;
+        private long batchId;
 
-        public int getUserId() {
+        public long getUserId() {
             return userId;
         }
 
-        public void setUserId(int userId) {
+        public void setUserId(long userId) {
             this.userId = userId;
         }
 
-        public int getBatchId() {
+        public long getBatchId() {
             return batchId;
         }
 
-        public void setBatchId(int batchId) {
+        public void setBatchId(long batchId) {
             this.batchId = batchId;
         }
     }

@@ -8,5 +8,5 @@ public interface BatchService {
 
     List<Batches> getAllBatches();
     Batches createBatch(Batches batch);
-    void deleteBatchById(int batchId);
+    void deleteBatchById(long batchId);
 }
