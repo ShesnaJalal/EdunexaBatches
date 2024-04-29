@@ -43,24 +43,12 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
         return batchParticipantsDao.findById(userId);
     }
 
-//    @Override
-//    @Transactional
-//    public String deleteBatchParticipant(BatchParticipants batchParticipant) {
-//        batchParticipantsDao.delete(batchParticipant);
-//        return "Deleted";
-//    }
 
     @Override
     @Transactional
     public void deleteParticipantFromBatch(long batchId, long userId) {
         batchParticipantsDao.deleteByBatches_BatchIdAndUsers_UserId(batchId, userId);
     }
-//
-//    @Override
-//    public void addBatchParticipant(BatchParticipants batchParticipants){
-//        batchParticipantsDao.save(batchParticipants);
-//    }
-//add 2
 
     @Override
     @Transactional
@@ -80,4 +68,13 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
         // Save BatchParticipants entity
         batchParticipantsDao.save(batchParticipants);
     }
+    @Override
+    @Transactional
+    public void deleteParticipantsByBatchId(int batchId) {
+        List<BatchParticipants> participants = batchParticipantsDao.findByBatches_BatchId(batchId);
+        for (BatchParticipants participant : participants) {
+            batchParticipantsDao.delete(participant);
+        }
+    }
+
 }

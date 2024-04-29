@@ -1,21 +1,15 @@
 package com.example.v1project.controller;
 
 
-import com.example.v1project.dto.BatchParticipants;
 import com.example.v1project.dto.Users;
-import com.example.v1project.dto.Batches;
-//import com.example.v1project.utility.ResponseBuilder;
 import com.example.v1project.service.BatchParticipantsService;
-//import com.example.v1project.dto.BatchParticipantRequest;
-import com.example.v1project.service.BatchParticipantsServiceImpl;
+import com.example.v1project.utility.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
+
 import java.util.List;
-import java.util.Optional;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/batches/participants")
@@ -25,43 +19,47 @@ public class BatchParticipantsController {
     private BatchParticipantsService batchParticipantsService;
 
     @GetMapping("/{batchId}")
-    public ResponseEntity<List<Users>> getParticipantsByBatchId(@PathVariable long batchId) {
-        List<Users> participants = batchParticipantsService.getParticipantsByBatchId(batchId);
-        return new ResponseEntity<>(participants, HttpStatus.OK);
-    }
+    public ResponseEntity<?> getParticipantsByBatchId(@PathVariable long batchId) {
+        try {
+            List<Users> participants = batchParticipantsService.getParticipantsByBatchId(batchId);
+            return ResponseBuilder.buildResponse(200, "Success", null, participants);
+        } catch (Exception e){
+            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving participants", e.getMessage(), null);
+        }
 
-//    @DeleteMapping("/{userId}")
-//    public String deleteBatchParticipant(@PathVariable long userId){
-//        Optional<BatchParticipants> deletedBatchParticipantOptional = batchParticipantsService.getBatchParticipantById(userId);
-//        if (deletedBatchParticipantOptional.isPresent()) {
-//            BatchParticipants deletedBatchParticipant = deletedBatchParticipantOptional.get();
-//            return batchParticipantsService.deleteBatchParticipant(deletedBatchParticipant);
-//        } else {
-//            throw new RuntimeException("User with ID " + userId + " not found");
-//        }
-//    }
+    }
 
     @DeleteMapping("/{batchId}/{userId}")
-    public ResponseEntity<String> deleteParticipantFromBatch(@PathVariable long batchId, @PathVariable long userId) {
-        batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
-        return new ResponseEntity<>("Deleted participant with ID: " + userId + " from batch with ID: " + batchId, HttpStatus.OK);
+    public ResponseEntity<?> deleteParticipantFromBatch(@PathVariable long batchId, @PathVariable long userId) {
+        try {
+            batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
+            return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
+        } catch (BatchIdNotFoundException e) {
+            return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+        } catch (UserIdNotFoundException e) {
+            return ResponseBuilder.buildResponse(404, "User not found", "User not found with the given ID", null);
+        } catch (ParticipantNotFoundException e) {
+            return ResponseBuilder.buildResponse(404, "Participant not found", "Participant not found with the given ID in the batch", null);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(500, "Error occurred while deleting participant from batch", e.getMessage(), null);
+        }
     }
 
 
-
-//    @PostMapping
-//    public ResponseEntity<Batches> addBatchParticipants(@RequestBody  BatchParticipants batchParticipants){
-//        batchParticipantsService.addBatchParticipant(batchParticipants);
-//
-//        return ResponseEntity.ok().build();
-//
-//
-//    }
-//post
     @PostMapping
-    public ResponseEntity<Void> addBatchParticipants(@RequestBody BatchParticipantsRequest request) {
-        batchParticipantsService.addBatchParticipant(request.getUserId(), request.getBatchId());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Object> addBatchParticipants(@RequestBody BatchParticipantsRequest request) {
+        try {
+            batchParticipantsService.addBatchParticipant(request.getUserId(), request.getBatchId());
+            return ResponseBuilder.buildResponse(200, "Success", null, null);
+        } catch (BatchIdNotFoundException e) {
+            return ResponseBuilder.buildResponse(404, "Batch ID not found", e.getMessage(), null);
+        } catch (UserIdNotFoundException e) {
+            return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
+        } catch (ParticipantAlreadyExistsException e) {
+            return ResponseBuilder.buildResponse(404, "Participant already exists", e.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error", e.getMessage(), null);
+        }
     }
 
     public static class BatchParticipantsRequest {
@@ -84,9 +82,5 @@ public class BatchParticipantsController {
             this.batchId = batchId;
         }
     }
-
-
-
-
 
 }
