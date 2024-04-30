@@ -14,6 +14,7 @@ public interface BatchParticipantsService {
     //    void addBatchParticipant(BatchParticipants batchParticipants);
     void addBatchParticipant(int userId, int batchId);
     void deleteParticipantsByBatchId(int batchId);
+    int countParticipantsByBatchId(long batchId);
 
 
 }

@@ -76,5 +76,9 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
             batchParticipantsDao.delete(participant);
         }
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public int countParticipantsByBatchId(long batchId) {
+        return batchParticipantsDao.countByBatches_BatchId(batchId);
+    }
 }

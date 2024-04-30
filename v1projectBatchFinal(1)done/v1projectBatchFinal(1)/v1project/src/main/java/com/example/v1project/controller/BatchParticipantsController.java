@@ -23,8 +23,8 @@ public class BatchParticipantsController {
     @Autowired
     private BatchServiceImpl batchService;
 
-    @GetMapping("/{batchId}")
-    public ResponseEntity<?> getParticipantsByBatchId(@PathVariable int batchId) {
+    @GetMapping(params = "batchId")
+    public ResponseEntity<?> getParticipantsByBatchId(@RequestParam int batchId) {
         try {
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
@@ -39,8 +39,8 @@ public class BatchParticipantsController {
 
     }
 
-    @DeleteMapping("/{batchId}/{userId}")
-    public ResponseEntity<?> deleteParticipantFromBatch(@PathVariable long batchId, @PathVariable long userId) {
+    @DeleteMapping(params = {"batchId","userId"})
+    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam long batchId, @RequestParam long userId) {
         try {
             batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
             return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
@@ -92,5 +92,13 @@ public class BatchParticipantsController {
             this.batchId = batchId;
         }
     }
-
+    @GetMapping("/count")
+    public ResponseEntity<?> countParticipantsByBatchId(@RequestParam long batchId) {
+        try {
+            int count = batchParticipantsService.countParticipantsByBatchId(batchId);
+            return ResponseBuilder.buildResponse(200, "Success", null, count);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(500, "Error occurred while counting participants", e.getMessage(), null);
+        }
+    }
 }

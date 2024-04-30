@@ -83,24 +83,9 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
         }
     }
-    //
-//    @DeleteMapping("/{batchId}")
-//    public ResponseEntity<?> deleteBatch(@PathVariable int batchId) {
-//        Batches batch = batchService.getBatchById(batchId);
-//        if(batch != null) {
-//            try {
-//                batchService.deleteBatchById(batchId);
-//                return ResponseBuilder.buildResponse(200, "Deleted Successfully", null, null);
-//            } catch (ResponseStatusException e) {
-//                return ResponseBuilder.buildResponse(e.getStatusCode().value(), "Error occurred while deleting batch", e.getMessage(), null);
-//            }
-//        }
-//        else {
-//            return ResponseBuilder.buildResponse(404, "Batch not found", null, null);
-//        }
-//    }
-    @DeleteMapping("/{batchId}")
-    public ResponseEntity<?> deleteBatch(@PathVariable int batchId) {
+
+    @DeleteMapping(params = "batchId")
+    public ResponseEntity<?> deleteBatch(@RequestParam int batchId) {
         Batches batch = batchService.getBatchById(batchId);
         if (batch != null) {
             try {
