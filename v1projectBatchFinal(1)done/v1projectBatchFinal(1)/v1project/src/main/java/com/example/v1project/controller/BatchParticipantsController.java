@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/batches/participants")
@@ -96,7 +98,13 @@ public class BatchParticipantsController {
     public ResponseEntity<?> countParticipantsByBatchId(@RequestParam long batchId) {
         try {
             int count = batchParticipantsService.countParticipantsByBatchId(batchId);
-            return ResponseBuilder.buildResponse(200, "Success", null, count);
+
+            // Create a map to represent the count value
+            Map<String, Integer> countMap = new HashMap<>();
+            countMap.put("count", count);
+
+            // Return the response with the count value inside the responseData
+            return ResponseBuilder.buildResponse(200, "Success", null, countMap);
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while counting participants", e.getMessage(), null);
         }
