@@ -1,6 +1,7 @@
 package com.example.v1project.controller;
 
 
+import com.example.v1project.dao.BatchParticipantsDao;
 import com.example.v1project.dao.UsersDao;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
@@ -29,6 +30,9 @@ public class BatchParticipantsController {
 
     @Autowired
     private UsersDao usersDao;
+
+    @Autowired
+    private BatchParticipantsDao BatchParticipantDao;
 
     @GetMapping(params = "batchId")
     public ResponseEntity<?> getParticipantsByBatchId(@RequestParam int batchId) {
