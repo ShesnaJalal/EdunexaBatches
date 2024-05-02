@@ -3,6 +3,7 @@ package com.example.v1project.controller;
 
 import com.example.v1project.dao.BatchParticipantsDao;
 import com.example.v1project.dao.UsersDao;
+import com.example.v1project.dto.BatchParticipants;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
 import com.example.v1project.service.BatchParticipantsService;
@@ -32,7 +33,11 @@ public class BatchParticipantsController {
     private UsersDao usersDao;
 
     @Autowired
+<<<<<<< HEAD
     private BatchParticipantsDao BatchParticipantDao;
+=======
+    private BatchParticipantsDao batchParticipantsDao;
+>>>>>>> d06ccb71bd22526355b16dc06e7512b8c9470f81
 
     @GetMapping(params = "batchId")
     public ResponseEntity<?> getParticipantsByBatchId(@RequestParam int batchId) {
@@ -54,12 +59,12 @@ public class BatchParticipantsController {
     }
 
     @DeleteMapping(params = {"batchId","userId"})
-    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam int batchId, @RequestParam int userId) {
+    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam int batchId, @RequestParam long userId) {
         try {
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
                 // Check if the user exists
-                Optional<Users> userOptional = usersDao.findById(userId);
+                Optional<BatchParticipants> userOptional = batchParticipantsDao.findById(userId);
                 if (!userOptional.isPresent()) {
                     throw new UserIdNotFoundException("User not found with ID: " + userId);
                 }
