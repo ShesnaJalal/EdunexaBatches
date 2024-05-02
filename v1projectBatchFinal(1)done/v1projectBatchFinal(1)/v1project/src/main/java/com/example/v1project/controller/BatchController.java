@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,26 +52,32 @@ public class BatchController {
 
     }
 
+
     @GetMapping(params = "batchId")
     public ResponseEntity<?> getBatchById(@RequestParam int batchId) {
         try {
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
-                return ResponseBuilder.buildResponse(200, "Success", null, batch);
+                List<Batches> batchList = new ArrayList<>();
+                batchList.add(batch);
+                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
         }
     }
+
 
     @GetMapping(params = "batchName")
     public ResponseEntity<?> getBatchByName(@RequestParam String batchName) {
         try {
             Batches batch = batchService.getBatchByName(batchName);
             if (batch != null) {
-                return ResponseBuilder.buildResponse(200, "Success", null, batch);
+                List<Batches> batchList = new ArrayList<>();
+                batchList.add(batch);
+                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given name", null);
             }
@@ -78,6 +85,8 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
         }
     }
+
+
     @PostMapping
     public ResponseEntity<?> createBatch(@RequestBody BatchRequest batchRequest) {
         try {
@@ -147,7 +156,7 @@ public class BatchController {
             return ResponseBuilder.buildResponse(404, "Batch not found", null, null);
         }
   }
-    @PutMapping(params = "batchId")
+    @PutMapping
     public ResponseEntity<?> editBatchName(@RequestParam int batchId, @RequestBody BatchRequest batchRequest) {
         try {
             // Check if batchName is null or empty
