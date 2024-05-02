@@ -103,21 +103,44 @@ public class BatchParticipantsController {
 
 
 
+//    @PostMapping
+//    public ResponseEntity<Object> addBatchParticipants(@RequestBody BatchParticipantsRequest request) {
+//        try {
+//            batchParticipantsService.addBatchParticipant(request.getUserId(), request.getBatchId());
+//            return ResponseBuilder.buildResponse(200, "Success", null, null);
+//        } catch (BatchIdNotFoundException e) {
+//            return ResponseBuilder.buildResponse(404, "Batch ID not found", e.getMessage(), null);
+//        } catch (UserIdNotFoundException e) {
+//            return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
+//        } catch (ParticipantAlreadyExistsException e) {
+//            return ResponseBuilder.buildResponse(404, "Participant already exists", e.getMessage(), null);
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error", e.getMessage(), null);
+//        }
+//    }
+
     @PostMapping
-    public ResponseEntity<Object> addBatchParticipants(@RequestBody BatchParticipantsRequest request) {
+    public ResponseEntity<Object> addBatchParticipants(@RequestBody(required = false) BatchParticipantsRequest request) {
         try {
+            if (request==null) {
+                return ResponseBuilder.buildResponse(400,"Bad Request","Request Body cannot be empty",null);
+            }
+
+            if (request.getUserId() <= 0) {
+                throw new UserIdNotFoundException("User ID is missing.");
+            }
+            if (request.getBatchId() <= 0) {
+                throw new BatchIdNotFoundException("Batch ID is missing.");
+            }
             batchParticipantsService.addBatchParticipant(request.getUserId(), request.getBatchId());
             return ResponseBuilder.buildResponse(200, "Success", null, null);
-        } catch (BatchIdNotFoundException e) {
-            return ResponseBuilder.buildResponse(404, "Batch ID not found", e.getMessage(), null);
-        } catch (UserIdNotFoundException e) {
-            return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
-        } catch (ParticipantAlreadyExistsException e) {
+        }  catch (ParticipantAlreadyExistsException e) {
             return ResponseBuilder.buildResponse(404, "Participant already exists", e.getMessage(), null);
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error", e.getMessage(), null);
         }
     }
+
 
     public static class BatchParticipantsRequest {
         private int userId;

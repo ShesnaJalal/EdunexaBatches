@@ -86,12 +86,10 @@ public class BatchController {
     @PostMapping
     public ResponseEntity<?> createBatch(@RequestBody(required = false) BatchRequest batchRequest) {
         try {
-            // Check if request body is null
             if (batchRequest == null) {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
             }
 
-            // Check if batchName is null or empty
             if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
             }
@@ -217,47 +215,6 @@ public class BatchController {
     }
 
 
-
-//    @PostMapping
-//    public ResponseEntity<?> createBatch(@RequestBody BatchRequest batchRequest) {
-//        try {
-//            Batches existingBatch = batchService.getBatchByName(batchRequest.getBatchName());
-//            if (existingBatch != null) {
-//                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists", null);
-//            }
-//            Batches createdBatch = batchService.createBatch(batchRequest);
-//            return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);
-//        }
-//        catch (Exception e){
-//            return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
-//        }
-//    }
-
-
-
-//
-//    @DeleteMapping(params = "batchId")
-//    public ResponseEntity<?> deleteBatch(@RequestParam(required = true) int batchId) {
-//
-//        Batches batch = batchService.getBatchById(batchId);
-//        if (batch != null) {
-//            try {
-//                // Delete all associated batch participants
-//                batchParticipantsService.deleteParticipantsByBatchId(batchId);
-//
-//                // Delete the batch
-//                batchService.deleteBatchById(batchId);
-//
-//                return ResponseBuilder.buildResponse(200, "Deleted Successfully", null, null);
-//            } catch (ResponseStatusException e) {
-//                return ResponseBuilder.buildResponse(e.getStatusCode().value(), "Error occurred while deleting batch", e.getMessage(), null);
-//            } catch (Exception e) {
-//                return ResponseBuilder.buildResponse(500, "Internal Server Error", e.getMessage(), null);
-//            }
-//        } else {
-//            return ResponseBuilder.buildResponse(404, "Batch not found", null, null);
-//        }
-//  }
 
 
 
