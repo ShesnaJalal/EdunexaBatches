@@ -33,11 +33,8 @@ public class BatchParticipantsController {
     private UsersDao usersDao;
 
     @Autowired
-<<<<<<< HEAD
     private BatchParticipantsDao BatchParticipantDao;
-=======
     private BatchParticipantsDao batchParticipantsDao;
->>>>>>> d06ccb71bd22526355b16dc06e7512b8c9470f81
 
     @GetMapping(params = "batchId")
     public ResponseEntity<?> getParticipantsByBatchId(@RequestParam int batchId) {
