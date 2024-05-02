@@ -100,12 +100,19 @@ public class BatchParticipantsController {
             return ResponseBuilder.buildResponse(500, "Error occurred while deleting participant from batch", e.getMessage(), null);
         }
     }
-
-
-
     @PostMapping
-    public ResponseEntity<Object> addBatchParticipants(@RequestBody BatchParticipantsRequest request) {
+    public ResponseEntity<Object> addBatchParticipants(@RequestBody(required = false) BatchParticipantsRequest request) {
         try {
+            // Check if request body is null
+            if (request == null) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
+            }
+
+            // Check if userId and batchId are provided
+            if (request.getUserId() == 0 || request.getBatchId() == 0) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "User ID and Batch ID must be provided", null);
+            }
+
             batchParticipantsService.addBatchParticipant(request.getUserId(), request.getBatchId());
             return ResponseBuilder.buildResponse(200, "Success", null, null);
         } catch (BatchIdNotFoundException e) {
@@ -118,6 +125,7 @@ public class BatchParticipantsController {
             return ResponseBuilder.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error", e.getMessage(), null);
         }
     }
+
 
     public static class BatchParticipantsRequest {
         private int userId;
