@@ -90,4 +90,5 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
     public int countParticipantsByBatchId(long batchId) {
         return batchParticipantsDao.countByBatches_BatchId(batchId);
     }
+
 }
