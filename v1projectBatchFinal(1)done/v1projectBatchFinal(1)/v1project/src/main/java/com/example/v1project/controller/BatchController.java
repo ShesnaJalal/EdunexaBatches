@@ -146,10 +146,20 @@ public class BatchController {
         } else {
             return ResponseBuilder.buildResponse(404, "Batch not found", null, null);
         }
-    }
-    @PutMapping(params= "batchId")
+  }
+    @PutMapping(params = "batchId")
     public ResponseEntity<?> editBatchName(@RequestParam int batchId, @RequestBody BatchRequest batchRequest) {
         try {
+            // Check if batchName is null or empty
+            if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
+            }
+
+            // Check if batchName is a valid string
+            if (!isValidBatchName(batchRequest.getBatchName())) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
+            }
+
             Batches existingBatch = batchService.getBatchById(batchId);
             if (existingBatch == null) {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
@@ -169,6 +179,29 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while updating batch name", e.getMessage(), null);
         }
     }
+
+//    @PutMapping(params= "batchId")
+//    public ResponseEntity<?> editBatchName(@RequestParam int batchId, @RequestBody BatchRequest batchRequest) {
+//        try {
+//            Batches existingBatch = batchService.getBatchById(batchId);
+//            if (existingBatch == null) {
+//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+//            }
+//
+//            // Check if the new batch name already exists
+//            Batches batchWithNewName = batchService.getBatchByName(batchRequest.getBatchName());
+//            if (batchWithNewName != null && batchWithNewName.getBatchId() != batchId) {
+//                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists in the system", null);
+//            }
+//
+//            // Modify the batch name
+//            existingBatch.setBatchName(batchRequest.getBatchName());
+//            Batches updatedBatch = batchService.updateBatch(existingBatch);
+//            return ResponseBuilder.buildResponse(200, "Batch name updated successfully", null, updatedBatch);
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while updating batch name", e.getMessage(), null);
+//        }
+//    }
 
 
 }
