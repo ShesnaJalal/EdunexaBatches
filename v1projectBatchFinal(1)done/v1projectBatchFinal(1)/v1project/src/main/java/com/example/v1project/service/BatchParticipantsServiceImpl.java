@@ -6,6 +6,7 @@ import com.example.v1project.dao.UsersDao;
 import com.example.v1project.dto.BatchParticipants;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
+import com.example.v1project.utility.ParticipantAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,12 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
     @Override
     @Transactional
     public void addBatchParticipant(int userId, int batchId) {
+        int participantCount = batchParticipantsDao.countByBatchesBatchIdAndUsersUserId(batchId, userId);
+
+        if (participantCount > 0) {
+            throw new ParticipantAlreadyExistsException("Participant with ID: " + userId + " already exists in batch with ID: " + batchId);
+        }
+
         // Fetch Users and Batches entities from database
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
@@ -68,6 +75,7 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
         // Save BatchParticipants entity
         batchParticipantsDao.save(batchParticipants);
     }
+
     @Override
     @Transactional
     public void deleteParticipantsByBatchId(int batchId) {
@@ -76,6 +84,7 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
             batchParticipantsDao.delete(participant);
         }
     }
+
     @Override
     @Transactional(readOnly = true)
     public int countParticipantsByBatchId(long batchId) {

@@ -1,6 +1,7 @@
 package com.example.v1project.controller;
 
 
+import com.example.v1project.dao.UsersDao;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
 import com.example.v1project.service.BatchParticipantsService;
@@ -11,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/batches/participants")
@@ -23,31 +27,45 @@ public class BatchParticipantsController {
     @Autowired
     private BatchServiceImpl batchService;
 
+    @Autowired
+    private UsersDao usersDao;
+
     @GetMapping(params = "batchId")
     public ResponseEntity<?> getParticipantsByBatchId(@RequestParam int batchId) {
         try {
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
                 List<Users> participants = batchParticipantsService.getParticipantsByBatchId(batchId);
-                return ResponseBuilder.buildResponse(200, "Success", null, participants);
+                if (!participants.isEmpty()) {
+                    return ResponseBuilder.buildResponse(200, "Success", null, participants);
+                } else {
+                    return ResponseBuilder.buildResponse(200, "Success", null, "Participants doesn't exist in this batch");
+                }
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
             }
         } catch (Exception e){
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving participants", e.getMessage(), null);
         }
-
     }
 
     @DeleteMapping(params = {"batchId","userId"})
-    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam long batchId, @RequestParam long userId) {
+    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam int batchId, @RequestParam int userId) {
         try {
-            batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
-            return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
-        } catch (BatchIdNotFoundException e) {
-            return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+            Batches batch = batchService.getBatchById(batchId);
+            if (batch != null) {
+                // Check if the user exists
+                Optional<Users> userOptional = usersDao.findById(userId);
+                if (!userOptional.isPresent()) {
+                    throw new UserIdNotFoundException("User not found with ID: " + userId);
+                }
+                batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
+                return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
+            } else {
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+            }
         } catch (UserIdNotFoundException e) {
-            return ResponseBuilder.buildResponse(404, "User not found", "User not found with the given ID", null);
+            return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
         } catch (ParticipantNotFoundException e) {
             return ResponseBuilder.buildResponse(404, "Participant not found", "Participant not found with the given ID in the batch", null);
         } catch (Exception e) {
@@ -92,13 +110,28 @@ public class BatchParticipantsController {
             this.batchId = batchId;
         }
     }
+
     @GetMapping("/count")
-    public ResponseEntity<?> countParticipantsByBatchId(@RequestParam long batchId) {
+    public ResponseEntity<?> countParticipantsByBatchId(@RequestParam int batchId) {
         try {
-            int count = batchParticipantsService.countParticipantsByBatchId(batchId);
-            return ResponseBuilder.buildResponse(200, "Success", null, count);
+            Batches batch = batchService.getBatchById(batchId);
+            if (batch != null) {
+                int count = batchParticipantsService.countParticipantsByBatchId(batchId);
+                return buildCountResponse(count);
+            } else {
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+            }
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while counting participants", e.getMessage(), null);
         }
+    }
+
+    private ResponseEntity<?> buildCountResponse(int count) {
+        // Create a map to represent the count value
+        Map<String, Integer> countMap = new HashMap<>();
+        countMap.put("count", count);
+
+        // Return the response with the count value inside the responseData
+        return ResponseBuilder.buildResponse(200, "Success", null, countMap);
     }
 }
