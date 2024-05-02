@@ -1,5 +1,6 @@
 package com.example.v1project.controller;
 
+import com.example.v1project.dao.BatchParticipantsDao;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.service.BatchServiceImpl;
 import com.example.v1project.dto.BatchParticipants;
@@ -23,6 +24,14 @@ public class BatchController {
     private BatchServiceImpl batchService;
     @Autowired
     private BatchParticipantsServiceImpl batchParticipantsService;
+    private final BatchParticipantsDao batchParticipantsDao;
+    @Autowired
+    public BatchController(BatchParticipantsDao batchParticipantsDao) {
+        this.batchParticipantsDao = batchParticipantsDao;
+    }
+//    @Autowired
+//    private BatchParticipantsDao batchParticipantsDao;
+
 
 
     @Data
