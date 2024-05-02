@@ -82,7 +82,6 @@ public class BatchParticipantsController {
         try {
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
-                // Check if the user exists in the batch
                 boolean participantExists = batchParticipantsDao.existsByBatchesBatchIdAndUsersUserId(batchId, userId);
                 if (participantExists) {
                     batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
