@@ -3,6 +3,7 @@ package com.example.v1project.service;
 import com.example.v1project.controller.BatchController;
 import com.example.v1project.dao.BatchDao;
 import com.example.v1project.dto.Batches;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,16 @@ public class BatchServiceImpl {
     public void deleteBatchById(int batchId) {
         batchDao.deleteById(batchId);
     }
-
+    public Batches updateBatch(Batches batch) {
+        // Check if the batch exists in the database
+        Optional<Batches> existingBatchOptional = batchDao.findById(batch.getBatchId());
+        if (existingBatchOptional.isPresent()) {
+            Batches existingBatch = existingBatchOptional.get();
+            existingBatch.setBatchName(batch.getBatchName());
+            return batchDao.save(existingBatch);
+        } else {
+            throw new EntityNotFoundException("Batch not found with id: " + batch.getBatchId());
+        }
+    }
 
 }
