@@ -3,7 +3,6 @@ package com.example.v1project.controller;
 
 import com.example.v1project.dao.BatchParticipantsDao;
 import com.example.v1project.dao.UsersDao;
-import com.example.v1project.dto.BatchParticipants;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
 import com.example.v1project.service.BatchParticipantsService;
@@ -54,29 +53,54 @@ public class BatchParticipantsController {
         }
     }
 
+//    @DeleteMapping(params = {"batchId","userId"})
+//    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam int batchId, @RequestParam int userId) {
+//        try {
+//            Batches batch = batchService.getBatchById(batchId);
+//            if (batch != null) {
+//                // Check if the user exists
+//                Optional<Users> userOptional = usersDao.findById(userId);
+//                if (!userOptional.isPresent()) {
+//                    throw new UserIdNotFoundException("User not found with ID: " + userId);
+//                }
+//                batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
+//                return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
+//            } else {
+//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+//            }
+//        } catch (UserIdNotFoundException e) {
+//            return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
+//        } catch (ParticipantNotFoundException e) {
+//            return ResponseBuilder.buildResponse(404, "Participant not found", "Participant not found with the given ID in the batch", null);
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while deleting participant from batch", e.getMessage(), null);
+//        }
+//    }
+
     @DeleteMapping(params = {"batchId","userId"})
-    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam int batchId, @RequestParam long userId) {
+    public ResponseEntity<?> deleteParticipantFromBatch(@RequestParam int batchId, @RequestParam int userId) {
         try {
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
-                // Check if the user exists
-                Optional<BatchParticipants> userOptional = batchParticipantsDao.findById(userId);
-                if (!userOptional.isPresent()) {
-                    throw new UserIdNotFoundException("User not found with ID: " + userId);
+                boolean participantExists = batchParticipantsDao.existsByBatchesBatchIdAndUsersUserId(batchId, userId);
+                if (participantExists) {
+                    batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
+                    return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
+                } else {
+                    throw new ParticipantNotFoundException("Participant not found in batch with ID: " + userId);
                 }
-                batchParticipantsService.deleteParticipantFromBatch(batchId, userId);
-                return ResponseBuilder.buildResponse(200, "Success", "Deleted participant with ID: " + userId + " from batch with ID: " + batchId, null);
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
             }
         } catch (UserIdNotFoundException e) {
             return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
         } catch (ParticipantNotFoundException e) {
-            return ResponseBuilder.buildResponse(404, "Participant not found", "Participant not found with the given ID in the batch", null);
+            return ResponseBuilder.buildResponse(404, "Participant not found", e.getMessage(), null);
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while deleting participant from batch", e.getMessage(), null);
         }
     }
+
 
 
     @PostMapping

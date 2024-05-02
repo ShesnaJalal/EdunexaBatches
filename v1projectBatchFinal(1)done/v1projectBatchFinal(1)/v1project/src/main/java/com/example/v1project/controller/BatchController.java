@@ -36,6 +36,7 @@ public class BatchController {
 
     @Data
     public static class BatchRequest {
+
         private String batchName;
     }
 
@@ -77,10 +78,19 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
         }
     }
-
     @PostMapping
     public ResponseEntity<?> createBatch(@RequestBody BatchRequest batchRequest) {
         try {
+            // Check if batchName is null or empty
+            if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
+            }
+
+            // Check if batchName is a valid string
+            if (!isValidBatchName(batchRequest.getBatchName())) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
+            }
+
             Batches existingBatch = batchService.getBatchByName(batchRequest.getBatchName());
             if (existingBatch != null) {
                 return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists", null);
@@ -92,6 +102,29 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
         }
     }
+
+    // Method to validate batchName
+    private boolean isValidBatchName(String batchName) {
+        // Perform your custom validation logic here
+        // For example, you can check if the batchName contains only letters, numbers, underscores, or spaces
+        return batchName.matches("^[a-zA-Z0-9_ ]*$");
+    }
+
+
+//    @PostMapping
+//    public ResponseEntity<?> createBatch(@RequestBody BatchRequest batchRequest) {
+//        try {
+//            Batches existingBatch = batchService.getBatchByName(batchRequest.getBatchName());
+//            if (existingBatch != null) {
+//                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists", null);
+//            }
+//            Batches createdBatch = batchService.createBatch(batchRequest);
+//            return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);
+//        }
+//        catch (Exception e){
+//            return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
+//        }
+//    }
 
     @DeleteMapping(params = "batchId")
     public ResponseEntity<?> deleteBatch(@RequestParam int batchId) {
