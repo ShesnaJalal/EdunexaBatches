@@ -103,22 +103,29 @@ public class BatchController {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
             }
 
-            // Check if batchName is a valid string
-            if (!isValidBatchName(batchRequest.getBatchName())) {
+            // Trim the batch name to remove leading and trailing white spaces
+            String trimmedBatchName = batchRequest.getBatchName().trim();
+
+            // Check if trimmed batch name is a valid string
+            if (!isValidBatchName(trimmedBatchName)) {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
             }
 
-            Batches existingBatch = batchService.getBatchByName(batchRequest.getBatchName());
+            // Check if batch name already exists (after trimming)
+            Batches existingBatch = batchService.getBatchByName(trimmedBatchName);
             if (existingBatch != null) {
                 return ResponseBuilder.buildResponse(400, "Batch name already exists", "Batch name already exists", null);
             }
             Batches createdBatch = batchService.createBatch(batchRequest);
             return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);
-        }
-        catch (Exception e){
+        } catch (Exception e){
             return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
         }
     }
+
+
+
+
     @DeleteMapping(params = "batchId")
     public ResponseEntity<?> deleteBatch(@RequestParam(required = false) Integer batchId) {
         try {
