@@ -30,6 +30,8 @@ public class BatchController {
     public static class BatchRequest {
 
         private String batchName;
+        private Integer batchId;
+
     }
 
     @GetMapping
@@ -156,13 +158,19 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while processing request", e.getMessage(), null);
         }
     }
-    @PutMapping(params = "batchId")
-    public ResponseEntity<?> editBatchName(@RequestParam int batchId, @RequestBody(required = false) BatchRequest batchRequest) {
+    @PutMapping
+    public ResponseEntity<?> editBatchName(@RequestBody(required = false) BatchRequest batchRequest) {
         try {
             // Check if request body is null
-            if (batchRequest == null) {
+            if (batchRequest == null ) {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
             }
+
+            if (batchRequest.getBatchId() == null) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID cannot be null or empty", null);
+            }
+
+            int batchId = batchRequest.getBatchId();
 
             // Check if batchName is null or empty
             if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {

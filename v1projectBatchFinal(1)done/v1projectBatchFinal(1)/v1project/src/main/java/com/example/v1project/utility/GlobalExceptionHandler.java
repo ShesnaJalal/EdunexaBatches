@@ -18,10 +18,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        //return ResponseBuilder.buildResponse(400, "failed", "Data type error or invalid argument", null);
         String message = e.getMessage();
 
-        // Check if the error message contains information about the data type
         if (message != null) {
             if (message.contains("date")) {
                 return ResponseBuilder.buildResponse(400, "failed", "Invalid date format", null);

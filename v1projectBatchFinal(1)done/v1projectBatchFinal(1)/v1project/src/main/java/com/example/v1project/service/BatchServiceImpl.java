@@ -39,6 +39,7 @@ public class BatchServiceImpl {
     public void deleteBatchById(int batchId) {
         batchDao.deleteById(batchId);
     }
+
     public Batches updateBatch(Batches batch) {
         // Check if the batch exists in the database
         Optional<Batches> existingBatchOptional = batchDao.findById(batch.getBatchId());
