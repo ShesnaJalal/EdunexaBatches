@@ -172,7 +172,7 @@ public class BatchController {
 
             int batchId = batchRequest.getBatchId();
 
-            // Check if batchName is null or empty
+            // Check if batchName is null or empty.
             if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
             }
