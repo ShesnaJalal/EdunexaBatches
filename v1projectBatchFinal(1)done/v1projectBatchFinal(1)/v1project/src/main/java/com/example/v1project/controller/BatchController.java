@@ -22,23 +22,16 @@ public class BatchController {
 
     @Autowired
     private BatchServiceImpl batchService;
+
     @Autowired
     private BatchParticipantsServiceImpl batchParticipantsService;
-    private final BatchParticipantsDao batchParticipantsDao;
-    @Autowired
-    public BatchController(BatchParticipantsDao batchParticipantsDao) {
-        this.batchParticipantsDao = batchParticipantsDao;
-    }
-//    @Autowired
-//    private BatchParticipantsDao batchParticipantsDao;
-
-
 
     @Data
     public static class BatchRequest {
 
         private String batchName;
     }
+
     @GetMapping
     public ResponseEntity<?> getAllBatches() {
         try {
@@ -68,7 +61,9 @@ public class BatchController {
                 batchDetails.put("batchId", batch.getBatchId());
                 batchDetails.put("batchName", batch.getBatchName());
                 batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batchId));
-                return ResponseBuilder.buildResponse(200, "Success", null, batchDetails);
+                List<Map<String, Object>> batchList = new ArrayList<>();
+                batchList.add(batchDetails);
+                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
             }
@@ -78,40 +73,17 @@ public class BatchController {
     }
 
 
-//    @GetMapping
-//    public ResponseEntity<?> getAllBatches() {
-//        try {
-//            List<Batches> batches = batchService.getAllBatches();
-//            return ResponseBuilder.buildResponse(200, "Success", null, batches);
-//        }catch (Exception e) {
-//            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batches", e.getMessage(), null);
-//        }
-//
-//    }
-//
-//    @GetMapping(params = "batchId")
-//    public ResponseEntity<?> getBatchById(@RequestParam int batchId) {
-//        try {
-//            Batches batch = batchService.getBatchById(batchId);
-//            if (batch != null) {
-//                List<Batches> batchList = new ArrayList<>();
-//                batchList.add(batch);
-//                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
-//            } else {
-//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
-//            }
-//        }catch (Exception e) {
-//            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
-//        }
-//    }
-
     @GetMapping(params = "batchName")
     public ResponseEntity<?> getBatchByName(@RequestParam String batchName) {
         try {
             Batches batch = batchService.getBatchByName(batchName);
             if (batch != null) {
-                List<Batches> batchList = new ArrayList<>();
-                batchList.add(batch);
+                Map<String, Object> batchDetails = new HashMap<>();
+                batchDetails.put("batchId", batch.getBatchId());
+                batchDetails.put("batchName", batch.getBatchName());
+                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+                List<Map<String, Object>> batchList = new ArrayList<>();
+                batchList.add(batchDetails);
                 return ResponseBuilder.buildResponse(200, "Success", null, batchList);
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given name", null);
