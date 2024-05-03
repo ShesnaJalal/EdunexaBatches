@@ -123,18 +123,22 @@ public class BatchController {
         } catch (Exception e){
             return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
         }
+
     }
     @DeleteMapping
     public ResponseEntity<?> deleteBatch(@RequestParam(required = false) Integer batchId) {
+        // Check if batchId parameter is included in the endpoint
+        if (batchId == null) {
+            return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID parameter is required", null);
+        }
+
+        // Check if batchId value is provided
+        if (batchId == 0) {
+            return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID value must be provided", null);
+        }
+
         try {
-            // Check if batchId is provided
-            if (batchId == null) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID parameter is required", null);
-            }
-
-            // Retrieve batch information
             Batches batch = batchService.getBatchById(batchId);
-
             if (batch != null) {
                 try {
                     // Delete all associated batch participants
@@ -154,6 +158,40 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while processing request", e.getMessage(), null);
         }
     }
+
+
+
+//
+//    @DeleteMapping
+//    public ResponseEntity<?> deleteBatch(@RequestParam(required = false) Integer batchId) {
+//        try {
+//            // Check if batchId is provided
+//            if (batchId == null) {
+//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID parameter is required", null);
+//            }
+//
+//            Batches batch = batchService.getBatchById(batchId);
+//            if (batch != null) {
+//                try {
+//                    // Delete all associated batch participants
+//                    batchParticipantsService.deleteParticipantsByBatchId(batchId);
+//
+//                    // Delete the batch
+//                    batchService.deleteBatchById(batchId);
+//
+//                    return ResponseBuilder.buildResponse(200, "Deleted Successfully", null, null);
+//                } catch (Exception e) {
+//                    return ResponseBuilder.buildResponse(500, "Internal Server Error", e.getMessage(), null);
+//                }
+//            } else {
+//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+//            }
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while processing request", e.getMessage(), null);
+//        }
+//    }
+//
+
 
 
 
