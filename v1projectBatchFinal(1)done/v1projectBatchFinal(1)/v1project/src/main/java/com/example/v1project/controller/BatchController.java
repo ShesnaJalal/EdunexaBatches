@@ -110,7 +110,7 @@ public class BatchController {
 
             Batches existingBatch = batchService.getBatchByName(batchRequest.getBatchName());
             if (existingBatch != null) {
-                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists", null);
+                return ResponseBuilder.buildResponse(400, "Batch name already exists", "Batch name already exists", null);
             }
             Batches createdBatch = batchService.createBatch(batchRequest);
             return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);

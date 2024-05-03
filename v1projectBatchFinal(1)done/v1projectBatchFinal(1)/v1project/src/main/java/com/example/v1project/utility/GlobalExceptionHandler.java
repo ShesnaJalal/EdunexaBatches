@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
                 return ResponseBuilder.buildResponse(400, "failed", "Invalid ID format", null);
             }
         }
-        return ResponseBuilder.buildResponse(400, "failed", "Data type error or invalid argument", null);
+        return ResponseBuilder.buildResponse(400, "failed", "Data type error or invalid JSON format", null);
     }
     @ExceptionHandler(CustomException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
