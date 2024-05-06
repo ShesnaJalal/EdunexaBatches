@@ -13,6 +13,5 @@ public interface BatchParticipantsDao extends JpaRepository<BatchParticipants, L
     void deleteByBatches_BatchIdAndUsers_UserId(long batchId, long userId);
     int countByBatches_BatchId(long batchId);
     int countByBatchesBatchIdAndUsersUserId(int batchId, int userId);
-    boolean existsByBatchesBatchIdAndUsersUserId(int batchId, int userId); // Define the method here// Define the method here
-
+    boolean existsByBatchesBatchIdAndUsersUserId(int batchId, int userId);
 }

@@ -9,9 +9,7 @@ import java.util.Optional;
 public interface BatchParticipantsService {
     List<Users> getParticipantsByBatchId(long batchId);
     Optional<BatchParticipants> getBatchParticipantById(long userId); // New method
-    //    String deleteBatchParticipant(BatchParticipants batchParticipant); // New method
     void deleteParticipantFromBatch(long batchId, long userId);
-    //    void addBatchParticipant(BatchParticipants batchParticipants);
     void addBatchParticipant(int userId, int batchId);
     void deleteParticipantsByBatchId(int batchId);
     int countParticipantsByBatchId(long batchId);

@@ -1,16 +1,13 @@
 package com.example.v1project.controller;
-import com.example.v1project.dao.BatchParticipantsDao;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.service.BatchServiceImpl;
-import com.example.v1project.dto.BatchParticipants;
 import com.example.v1project.service.BatchParticipantsServiceImpl;
 import com.example.v1project.utility.ResponseBuilder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,29 +31,12 @@ public class BatchController {
 
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllBatches() {
-        try {
-            List<Batches> batches = batchService.getAllBatches();
-            List<Map<String, Object>> response = new ArrayList<>();
-
-            for (Batches batch : batches) {
-                Map<String, Object> batchDetails = new HashMap<>();
-                batchDetails.put("batchId", batch.getBatchId());
-                batchDetails.put("batchName", batch.getBatchName());
-                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
-                response.add(batchDetails);
-            }
-
-            return ResponseBuilder.buildResponse(200, "Success", null, response);
-        } catch (Exception e) {
-            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batches", e.getMessage(), null);
-        }
-    }
-
     @GetMapping(params = "batchId")
-    public ResponseEntity<?> getBatchById(@RequestParam int batchId) {
+    public ResponseEntity<?> getBatchById(@RequestParam(required = false) Integer batchId) {
         try {
+            if (batchId == null) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID is required", null);
+            }
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
                 Map<String, Object> batchDetails = new HashMap<>();
@@ -73,11 +53,12 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
         }
     }
-
-
     @GetMapping(params = "batchName")
-    public ResponseEntity<?> getBatchByName(@RequestParam String batchName) {
+    public ResponseEntity<?> getBatchByName(@RequestParam(required = false) String batchName) {
         try {
+            if (batchName == null || batchName.isEmpty()) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch Name is required", null);
+            }
             Batches batch = batchService.getBatchByName(batchName);
             if (batch != null) {
                 Map<String, Object> batchDetails = new HashMap<>();
@@ -94,6 +75,7 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
         }
     }
+
 
     @PostMapping
     public ResponseEntity<?> createBatch(@RequestBody(required = false) BatchRequest batchRequest) {
@@ -138,37 +120,7 @@ public class BatchController {
 
     }
 
-    //    @PostMapping
-//    public ResponseEntity<?> createBatch(@RequestBody(required = false) BatchRequest batchRequest) {
-//        try {
-//            if (batchRequest == null) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
-//            }
-//
-//            if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
-//            }
-//
-//            // Trim the batch name to remove leading and trailing white spaces
-//            String trimmedBatchName = batchRequest.getBatchName().trim();
-//
-//            // Check if trimmed batch name is a valid string
-//            if (!isValidBatchName(trimmedBatchName)) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
-//            }
-//
-//            // Check if batch name already exists (after trimming)
-//            Batches existingBatch = batchService.getBatchByName(trimmedBatchName);
-//            if (existingBatch != null) {
-//                return ResponseBuilder.buildResponse(400, "Batch name already exists", "Batch name already exists", null);
-//            }
-//            Batches createdBatch = batchService.createBatch(batchRequest);
-//            return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);
-//        } catch (Exception e){
-//            return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
-//        }
-//
-//    }
+
     @DeleteMapping
     public ResponseEntity<?> deleteBatch(@RequestParam(required = false) Integer batchId) {
         // Check if batchId parameter is included in the endpoint
@@ -259,86 +211,6 @@ public class BatchController {
         }
     }
 
-
-
-
-
-
-
-//
-//    @PutMapping
-//    public ResponseEntity<?> editBatchName(@RequestBody(required = false) BatchRequest batchRequest) {
-//        try {
-//            // Check if request body is null
-//            if (batchRequest == null ) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
-//            }
-//
-//            if (batchRequest.getBatchId() == null) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID cannot be null or empty", null);
-//            }
-//
-//            int batchId = batchRequest.getBatchId();
-//
-//            // Check if batchName is null or empty.
-//            if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
-//            }
-//
-//            // Check if batchName is a valid string
-//            if (!isValidBatchName(batchRequest.getBatchName())) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
-//            }
-//
-//            Batches existingBatch = batchService.getBatchById(batchId);
-//            if (existingBatch == null) {
-//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
-//            }
-//
-//            // Check if the new batch name already exists
-//            Batches batchWithNewName = batchService.getBatchByName(batchRequest.getBatchName());
-//            if (batchWithNewName != null && batchWithNewName.getBatchId() != batchId) {
-//                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists in the system", null);
-//            }
-//
-//            // Modify the batch name
-//            existingBatch.setBatchName(batchRequest.getBatchName());
-//            Batches updatedBatch = batchService.updateBatch(existingBatch);
-//            return ResponseBuilder.buildResponse(200, "Batch name updated successfully", null, updatedBatch);
-//        } catch (Exception e) {
-//            return ResponseBuilder.buildResponse(500, "Error occurred while updating batch name", e.getMessage(), null);
-//        }
-//    }
-//
-//
-//
-
-
-//    @PostMapping
-//    public ResponseEntity<?> createBatch(@RequestBody BatchRequest batchRequest) {
-//        try {
-//            // Check if batchName is null or empty
-//            if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
-//            }
-//
-//            // Check if batchName is a valid string
-//            if (!isValidBatchName(batchRequest.getBatchName())) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
-//            }
-//
-//            Batches existingBatch = batchService.getBatchByName(batchRequest.getBatchName());
-//            if (existingBatch != null) {
-//                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists", null);
-//            }
-//            Batches createdBatch = batchService.createBatch(batchRequest);
-//            return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);
-//        }
-//        catch (Exception e){
-//            return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
-//        }
-//    }
-
     // Method to validate batchName
     private boolean isValidBatchName(String batchName) {
         // Perform your custom validation logic here
@@ -346,42 +218,5 @@ public class BatchController {
         return batchName.matches("^[a-zA-Z0-9_ ]*$");
     }
 
-
-
-
-
-//
-//    @PutMapping(params = "batchId")
-//    public ResponseEntity<?> editBatchName(@RequestParam int batchId, @RequestBody BatchRequest batchRequest) {
-//        try {
-//            // Check if batchName is null or empty
-//            if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
-//            }
-//
-//            // Check if batchName is a valid string
-//            if (!isValidBatchName(batchRequest.getBatchName())) {
-//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
-//            }
-//
-//            Batches existingBatch = batchService.getBatchById(batchId);
-//            if (existingBatch == null) {
-//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
-//            }
-//
-//            // Check if the new batch name already exists
-//            Batches batchWithNewName = batchService.getBatchByName(batchRequest.getBatchName());
-//            if (batchWithNewName != null && batchWithNewName.getBatchId() != batchId) {
-//                return ResponseBuilder.buildResponse(409, "Batch name already exists", "Batch name already exists in the system", null);
-//            }
-//
-//            // Modify the batch name
-//            existingBatch.setBatchName(batchRequest.getBatchName());
-//            Batches updatedBatch = batchService.updateBatch(existingBatch);
-//            return ResponseBuilder.buildResponse(200, "Batch name updated successfully", null, updatedBatch);
-//        } catch (Exception e) {
-//            return ResponseBuilder.buildResponse(500, "Error occurred while updating batch name", e.getMessage(), null);
-//        }
-//    }
 
 }

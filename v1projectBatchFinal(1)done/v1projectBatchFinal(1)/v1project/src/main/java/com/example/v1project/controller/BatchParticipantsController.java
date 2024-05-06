@@ -13,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/batches/participants")
@@ -124,9 +121,7 @@ public class BatchParticipantsController {
             } else {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
             }
-        }
-
-        catch (UserIdNotFoundException e) {
+        } catch (UserIdNotFoundException e) {
             return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
         } catch (ParticipantNotFoundException e) {
             return ResponseBuilder.buildResponse(404, "Participant not found", e.getMessage(), null);
@@ -134,30 +129,4 @@ public class BatchParticipantsController {
             return ResponseBuilder.buildResponse(500, "Error occurred while deleting participant from batch", e.getMessage(), null);
         }
     }
-
-
-//    @GetMapping("/count")
-//    public ResponseEntity<?> countParticipantsByBatchId(@RequestParam int batchId) {
-//        try {
-//            Batches batch = batchService.getBatchById(batchId);
-//            if (batch != null) {
-//                int count = batchParticipantsService.countParticipantsByBatchId(batchId);
-//                return buildCountResponse(count);
-//            } else {
-//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
-//            }
-//        } catch (Exception e) {
-//            return ResponseBuilder.buildResponse(500, "Error occurred while counting participants", e.getMessage(), null);
-//        }
-//    }
-//
-//    private ResponseEntity<?> buildCountResponse(int count) {
-//        // Create a map to represent the count value
-//        Map<String, Integer> countMap = new HashMap<>();
-//        countMap.put("count", count);
-//
-//        // Return the response with the count value inside the responseData
-//        return ResponseBuilder.buildResponse(200, "Success", null, countMap);
-//    }
-
 }
