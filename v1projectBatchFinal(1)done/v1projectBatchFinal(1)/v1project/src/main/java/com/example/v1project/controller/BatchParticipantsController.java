@@ -111,7 +111,7 @@ public class BatchParticipantsController {
             return ResponseBuilder.buildResponse(500, "Error occurred while deleting participant from batch", e.getMessage(), null);
         }
     }
-
+//dlklkllsdl
 
 
 //    @PostMapping
