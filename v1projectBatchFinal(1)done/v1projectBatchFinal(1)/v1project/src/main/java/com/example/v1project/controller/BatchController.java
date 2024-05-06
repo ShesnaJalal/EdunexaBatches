@@ -119,7 +119,7 @@ public class BatchController {
                 return ResponseBuilder.buildResponse(400, "Batch name already exists", "Batch name already exists", null);
             }
             Batches createdBatch = batchService.createBatch(batchRequest);
-            return ResponseBuilder.buildResponse(201, "Batch created successfully", null, createdBatch);
+            return ResponseBuilder.buildResponse(200, "Batch created successfully", null, createdBatch);
         } catch (Exception e){
             return ResponseBuilder.buildResponse(500, "Error occurred while creating batch", e.getMessage(), null);
         }
