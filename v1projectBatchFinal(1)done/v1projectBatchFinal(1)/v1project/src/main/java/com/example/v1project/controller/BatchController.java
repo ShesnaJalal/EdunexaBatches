@@ -37,6 +37,7 @@ public class BatchController {
     @GetMapping
     public ResponseEntity<?> getAllBatches() {
         try {
+
             List<Batches> batches = batchService.getAllBatches();
             List<Map<String, Object>> response = new ArrayList<>();
 
@@ -53,10 +54,13 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batches", e.getMessage(), null);
         }
     }
-
     @GetMapping(params = "batchId")
-    public ResponseEntity<?> getBatchById(@RequestParam int batchId) {
+    public ResponseEntity<?> getBatchById(@RequestParam(required = false) Integer batchId) {
         try {
+            if (batchId == null) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID is required", null);
+            }
+
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
                 Map<String, Object> batchDetails = new HashMap<>();
@@ -73,11 +77,13 @@ public class BatchController {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
         }
     }
-
-
     @GetMapping(params = "batchName")
-    public ResponseEntity<?> getBatchByName(@RequestParam String batchName) {
+    public ResponseEntity<?> getBatchByName(@RequestParam(required = false) String batchName) {
         try {
+
+            if (batchName == null || batchName.isEmpty()) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch Name is required", null);
+            }
             Batches batch = batchService.getBatchByName(batchName);
             if (batch != null) {
                 Map<String, Object> batchDetails = new HashMap<>();
@@ -95,7 +101,31 @@ public class BatchController {
         }
     }
 
-    @PostMapping
+
+//    @GetMapping(params = "batchName")
+//    public ResponseEntity<?> getBatchByName(@RequestParam(required = false) String batchName) {
+//        try {
+//            if (batchName == null) {
+//                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch Name is required", null);
+//            }
+//            Batches batch = batchService.getBatchByName(batchName);
+//            if (batch != null) {
+//                Map<String, Object> batchDetails = new HashMap<>();
+//                batchDetails.put("batchId", batch.getBatchId());
+//                batchDetails.put("batchName", batch.getBatchName());
+//                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+//                List<Map<String, Object>> batchList = new ArrayList<>();
+//                batchList.add(batchDetails);
+//                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
+//            } else {
+//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given name", null);
+//            }
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
+//        }
+//    }
+//
+//    @PostMapping
     public ResponseEntity<?> createBatch(@RequestBody(required = false) BatchRequest batchRequest) {
         try {
             if (batchRequest == null) {
