@@ -59,10 +59,6 @@ public class BatchParticipantsController {
     }
 
 
-
-
-
-
     @PostMapping
     public ResponseEntity<Object> addBatchParticipants(@RequestBody(required = false) BatchParticipantsRequest request) {
         try {
