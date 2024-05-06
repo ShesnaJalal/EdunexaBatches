@@ -229,6 +229,16 @@ public class BatchController {
                 return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
             }
 
+            // Check if the batch name contains only numbers
+            if (trimmedBatchName.matches("\\d+")) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot contain only numbers", null);
+            }
+
+            // Check if the batch name contains only underscores
+            if (trimmedBatchName.matches("_+")) {
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot contain only underscore", null);
+            }
+
             Batches existingBatch = batchService.getBatchById(batchId);
             if (existingBatch == null) {
                 return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
