@@ -54,16 +54,11 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
     public void addBatchParticipant(int userId, int batchId) {
         int participantCount = batchParticipantsDao.countByBatchesBatchIdAndUsersUserId(batchId, userId);
 
-//        if (participantCount > 0) {
-//            throw new ParticipantAlreadyExistsException("Participant with ID: " + userId + " already exists in batch with ID: " + batchId);
-//        }
-
-        // Fetch Users and Batches entities from database
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+                .orElseThrow(() -> new IllegalArgumentException("Required fields missing: userId"));
 
         Batches batch = batchesRepository.findById(batchId)
-                .orElseThrow(() -> new IllegalArgumentException("Batch not found with ID: " + batchId));
+                .orElseThrow(() -> new IllegalArgumentException("Required fields missing: batchId"));
 
         // Create BatchParticipants entity and set Users and Batches
         BatchParticipants batchParticipants = new BatchParticipants();
