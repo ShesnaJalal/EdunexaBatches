@@ -31,6 +31,24 @@ public class BatchController {
 
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllBatches() {
+        try {
+            List<Batches> batches = batchService.getAllBatches();
+            List<Map<String, Object>> response = new ArrayList<>();
+            for (Batches batch : batches) {
+                Map<String, Object> batchDetails = new HashMap<>();
+                batchDetails.put("batchId", batch.getBatchId());
+                batchDetails.put("batchName", batch.getBatchName());
+                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+                response.add(batchDetails);
+            }
+            return ResponseBuilder.buildResponse(200, "Success", null, response);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batches", e.getMessage(), null);
+        }
+    }
+
     @GetMapping(params = "batchId")
     public ResponseEntity<?> getBatchById(@RequestParam(required = false) Integer batchId) {
         try {
