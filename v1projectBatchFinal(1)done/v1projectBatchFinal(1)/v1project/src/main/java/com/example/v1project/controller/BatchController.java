@@ -53,7 +53,7 @@ public class BatchController {
     public ResponseEntity<?> getBatchById(@RequestParam(required = false) Integer batchId) {
         try {
             if (batchId == null) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID is required", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is Missing: batchId", null);
             }
             Batches batch = batchService.getBatchById(batchId);
             if (batch != null) {
@@ -65,7 +65,7 @@ public class BatchController {
                 batchList.add(batchDetails);
                 return ResponseBuilder.buildResponse(200, "Success", null, batchList);
             } else {
-                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
             }
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
@@ -75,7 +75,7 @@ public class BatchController {
     public ResponseEntity<?> getBatchByName(@RequestParam(required = false) String batchName) {
         try {
             if (batchName == null || batchName.isEmpty()) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch Name is required", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchName", null);
             }
             Batches batch = batchService.getBatchByName(batchName);
             if (batch != null) {
@@ -87,7 +87,7 @@ public class BatchController {
                 batchList.add(batchDetails);
                 return ResponseBuilder.buildResponse(200, "Success", null, batchList);
             } else {
-                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given name", null);
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
             }
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
@@ -99,11 +99,11 @@ public class BatchController {
     public ResponseEntity<?> createBatch(@RequestBody(required = false) BatchRequest batchRequest) {
         try {
             if (batchRequest == null) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Invalid JSON format", null);
             }
 
             if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchName", null);
             }
 
             // Trim the batch name to remove leading and trailing white spaces
@@ -111,24 +111,24 @@ public class BatchController {
 
             // Check if trimmed batch name is a valid string
             if (!isValidBatchName(trimmedBatchName)) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "batchName field can only contain letters, numbers, underscores, or spaces", null);
             }
 
             // Check if the batch name contains only numbers
             if (trimmedBatchName.matches("\\d+")) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot contain only numbers", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "batchName field cannot contain only numbers", null);
             }
 
             // Check if the batch name contains only underscores
             if (trimmedBatchName.matches("_+")) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot contain only underscore", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "batchName field cannot contain only underscore", null);
             }
 
 
             // Check if batch name already exists (after trimming)
             Batches existingBatch = batchService.getBatchByName(trimmedBatchName);
             if (existingBatch != null) {
-                return ResponseBuilder.buildResponse(400, "Batch name already exists", "Batch name already exists", null);
+                return ResponseBuilder.buildResponse(400, "batchName already exists", "Batch name already exists", null);
             }
             Batches createdBatch = batchService.createBatch(batchRequest);
             return ResponseBuilder.buildResponse(200, "Batch created successfully", null, createdBatch);
@@ -143,12 +143,12 @@ public class BatchController {
     public ResponseEntity<?> deleteBatch(@RequestParam(required = false) Integer batchId) {
         // Check if batchId parameter is included in the endpoint
         if (batchId == null) {
-            return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID parameter is required", null);
+            return ResponseBuilder.buildResponse(400, "Bad Request", "Required parameters missing: batchId", null);
         }
 
         // Check if batchId value is provided
         if (batchId == 0) {
-            return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID value must be provided", null);
+            return ResponseBuilder.buildResponse(400, "Bad Request", "batchId cannot be null", null);
         }
 
         try {
@@ -166,7 +166,7 @@ public class BatchController {
                     return ResponseBuilder.buildResponse(500, "Internal Server Error", e.getMessage(), null);
                 }
             } else {
-                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
             }
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while processing request", e.getMessage(), null);
@@ -177,18 +177,18 @@ public class BatchController {
         try {
             // Check if request body is null
             if (batchRequest == null ) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Request body cannot be empty", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchId, batchName", null);
             }
 
             if (batchRequest.getBatchId() == null) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch ID cannot be null or empty", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchId", null);
             }
 
             int batchId = batchRequest.getBatchId();
 
             // Check if batchName is null or empty.
             if (batchRequest.getBatchName() == null || batchRequest.getBatchName().isEmpty()) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot be null or empty", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchName", null);
             }
 
             // Trim white spaces before and after the batch name
@@ -196,28 +196,29 @@ public class BatchController {
 
             // Check if batchName is a valid string
             if (!isValidBatchName(trimmedBatchName)) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name should only contain letters, numbers, underscores, or spaces", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "batchName field can only contain letters, numbers, underscores, or spaces", null);
             }
 
             // Check if the batch name contains only numbers
             if (trimmedBatchName.matches("\\d+")) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot contain only numbers", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "batchName field cannot contain only numbers", null);
             }
 
             // Check if the batch name contains only underscores
             if (trimmedBatchName.matches("_+")) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Batch name cannot contain only underscore", null);
+                return ResponseBuilder.buildResponse(400, "Bad Request", "batchName field cannot contain only underscore", null);
             }
 
             Batches existingBatch = batchService.getBatchById(batchId);
             if (existingBatch == null) {
-                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found with the given ID", null);
+                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
             }
 
             // Check if the new batch name already exists
-            Batches batchWithNewName = batchService.getBatchByName(trimmedBatchName);
-            if (batchWithNewName != null && batchWithNewName.getBatchId() != batchId) {
-                return ResponseBuilder.buildResponse(400, "Batch name already exists", "Batch name already exists in the system", null);
+            // Check if batch name already exists (after trimming)
+            Batches existingBatchName = batchService.getBatchByName(trimmedBatchName);
+            if (existingBatchName != null && existingBatchName.getBatchId() != batchId) {
+                return ResponseBuilder.buildResponse(400, "batchName already exists", "Batch name already exists", null);
             }
 
             // Modify the batch name

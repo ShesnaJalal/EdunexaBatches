@@ -13,6 +13,6 @@ public interface BatchParticipantsService {
     void addBatchParticipant(int userId, int batchId);
     void deleteParticipantsByBatchId(int batchId);
     int countParticipantsByBatchId(long batchId);
-
+    boolean isParticipantInBatch(int userId, int batchId); // Add this method
 
 }
