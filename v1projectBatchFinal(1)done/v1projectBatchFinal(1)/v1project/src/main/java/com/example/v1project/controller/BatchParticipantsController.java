@@ -62,13 +62,23 @@ public class BatchParticipantsController {
             if (request==null) {
                 return ResponseBuilder.buildResponse(400,"Bad Request","Invalid JSON format",null);
             }
-
             if (request.getUserId() == 0) {
                 return ResponseBuilder.buildResponse(400,"Bad Request","Required field is missing: userId",null);
             }
             if (request.getBatchId() == 0) {
                 return ResponseBuilder.buildResponse(400,"Bad Request","Required field is missing: batchId",null);
             }
+
+            Batches batch = batchService.getBatchById(request.getBatchId());
+            if (batch == null){
+                return ResponseBuilder.buildResponse(404,"Batch not found","Batch not found",null);
+            }
+
+            Users user = usersDao.findByUserId(request.getUserId());
+            if (user == null){
+                return ResponseBuilder.buildResponse(404,"User not found","User not found",null);
+            }
+
             boolean participantExists = batchParticipantsService.isParticipantInBatch(request.getUserId(), request.getBatchId());
             if (participantExists) {
                 return ResponseBuilder.buildResponse(409, "Conflict", "Participant already exists in the batch", null);
