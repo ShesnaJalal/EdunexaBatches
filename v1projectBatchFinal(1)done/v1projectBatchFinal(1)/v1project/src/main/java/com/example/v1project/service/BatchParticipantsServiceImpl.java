@@ -6,11 +6,9 @@ import com.example.v1project.dao.UsersDao;
 import com.example.v1project.dto.BatchParticipants;
 import com.example.v1project.dto.Batches;
 import com.example.v1project.dto.Users;
-import com.example.v1project.utility.ParticipantAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,16 +54,11 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
     public void addBatchParticipant(int userId, int batchId) {
         int participantCount = batchParticipantsDao.countByBatchesBatchIdAndUsersUserId(batchId, userId);
 
-        if (participantCount > 0) {
-            throw new ParticipantAlreadyExistsException("Participant with ID: " + userId + " already exists in batch with ID: " + batchId);
-        }
-
-        // Fetch Users and Batches entities from database
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+                .orElseThrow(() -> new IllegalArgumentException("Required fields missing: userId"));
 
         Batches batch = batchesRepository.findById(batchId)
-                .orElseThrow(() -> new IllegalArgumentException("Batch not found with ID: " + batchId));
+                .orElseThrow(() -> new IllegalArgumentException("Required fields missing: batchId"));
 
         // Create BatchParticipants entity and set Users and Batches
         BatchParticipants batchParticipants = new BatchParticipants();
@@ -90,5 +83,10 @@ public class BatchParticipantsServiceImpl implements BatchParticipantsService {
     public int countParticipantsByBatchId(long batchId) {
         return batchParticipantsDao.countByBatches_BatchId(batchId);
     }
+
+    public boolean isParticipantInBatch(int userId, int batchId) {
+        return batchParticipantsDao.existsByBatchesBatchIdAndUsersUserId(batchId, userId);
+    }
+
 
 }

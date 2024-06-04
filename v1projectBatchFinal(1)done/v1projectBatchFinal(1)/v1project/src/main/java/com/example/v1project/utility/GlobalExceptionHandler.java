@@ -63,26 +63,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 
-    @ExceptionHandler(BatchIdNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public ResponseEntity<Object> handleBatchIdNotFoundException(BatchIdNotFoundException e) {
-        return ResponseBuilder.buildResponse(404, "Batch ID not found", e.getMessage(), null);
-    }
-
-    @ExceptionHandler(UserIdNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public ResponseEntity<Object> handleUserIdNotFoundException(UserIdNotFoundException e) {
-        return ResponseBuilder.buildResponse(404, "User ID not found", e.getMessage(), null);
-    }
-
-    @ExceptionHandler(ParticipantNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public ResponseEntity<Object> handleParticipantNotFoundException(ParticipantNotFoundException e) {
-        return ResponseBuilder.buildResponse(404, "Participant not found", e.getMessage(), null);
-    }
-
 }
 
