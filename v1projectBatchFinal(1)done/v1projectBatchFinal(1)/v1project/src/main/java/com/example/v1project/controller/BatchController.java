@@ -31,72 +31,120 @@ public class BatchController {
 
     }
 
-
     @GetMapping
-    public ResponseEntity<?> getAllBatches() {
+    public ResponseEntity<?> getBatches(@RequestParam(required = false) Integer batchId, @RequestParam(required = false) String batchName) {
         try {
-            List<Batches> batches = batchService.getAllBatches();
-            List<Map<String, Object>> response = new ArrayList<>();
-            for (Batches batch : batches) {
-                Map<String, Object> batchDetails = new HashMap<>();
-                batchDetails.put("batchId", batch.getBatchId());
-                batchDetails.put("batchName", batch.getBatchName());
-                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
-                response.add(batchDetails);
+            if (batchId != null) {
+                Batches batch = batchService.getBatchById(batchId);
+                if (batch != null) {
+                    Map<String, Object> batchDetails = new HashMap<>();
+                    batchDetails.put("batchId", batch.getBatchId());
+                    batchDetails.put("batchName", batch.getBatchName());
+                    batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batchId));
+                    List<Map<String, Object>> batchList = new ArrayList<>();
+                    batchList.add(batchDetails);
+                    return ResponseBuilder.buildResponse(200, "Success", null, batchList);
+                } else {
+                    return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
+                }
+            } else if (batchName != null && !batchName.isEmpty()) {
+                Batches batch = batchService.getBatchByName(batchName);
+                if (batch != null) {
+                    Map<String, Object> batchDetails = new HashMap<>();
+                    batchDetails.put("batchId", batch.getBatchId());
+                    batchDetails.put("batchName", batch.getBatchName());
+                    batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+                    List<Map<String, Object>> batchList = new ArrayList<>();
+                    batchList.add(batchDetails);
+                    return ResponseBuilder.buildResponse(200, "Success", null, batchList);
+                } else {
+                    return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
+                }
+            } else {
+                List<Batches> batches = batchService.getAllBatches();
+                List<Map<String, Object>> response = new ArrayList<>();
+                for (Batches batch : batches) {
+                    Map<String, Object> batchDetails = new HashMap<>();
+                    batchDetails.put("batchId", batch.getBatchId());
+                    batchDetails.put("batchName", batch.getBatchName());
+                    batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+                    response.add(batchDetails);
+                }
+                return ResponseBuilder.buildResponse(200, "Success", null, response);
             }
-            return ResponseBuilder.buildResponse(200, "Success", null, response);
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batches", e.getMessage(), null);
         }
     }
 
 
-    @GetMapping(params = "batchId")
-    public ResponseEntity<?> getBatchById(@RequestParam(required = false) Integer batchId) {
-        try {
-            if (batchId == null) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is Missing: batchId", null);
-            }
-            Batches batch = batchService.getBatchById(batchId);
-            if (batch != null) {
-                Map<String, Object> batchDetails = new HashMap<>();
-                batchDetails.put("batchId", batch.getBatchId());
-                batchDetails.put("batchName", batch.getBatchName());
-                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batchId));
-                List<Map<String, Object>> batchList = new ArrayList<>();
-                batchList.add(batchDetails);
-                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
-            } else {
-                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
-            }
-        } catch (Exception e) {
-            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
-        }
-    }
 
 
-    @GetMapping(params = "batchName")
-    public ResponseEntity<?> getBatchByName(@RequestParam(required = false) String batchName) {
-        try {
-            if (batchName == null || batchName.isEmpty()) {
-                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchName", null);
-            }
-            Batches batch = batchService.getBatchByName(batchName);
-            if (batch != null) {
-                Map<String, Object> batchDetails = new HashMap<>();
-                batchDetails.put("batchId", batch.getBatchId());
-                batchDetails.put("batchName", batch.getBatchName());
-                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
-                List<Map<String, Object>> batchList = new ArrayList<>();
-                batchList.add(batchDetails);
-                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
-            } else {
-                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
-            }
-        } catch (Exception e) {
-            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
-        }
-    }
+//    @GetMapping
+//    public ResponseEntity<?> getAllBatches() {
+//        try {
+//            List<Batches> batches = batchService.getAllBatches();
+//            List<Map<String, Object>> response = new ArrayList<>();
+//            for (Batches batch : batches) {
+//                Map<String, Object> batchDetails = new HashMap<>();
+//                batchDetails.put("batchId", batch.getBatchId());
+//                batchDetails.put("batchName", batch.getBatchName());
+//                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+//                response.add(batchDetails);
+//            }
+//            return ResponseBuilder.buildResponse(200, "Success", null, response);
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batches", e.getMessage(), null);
+//        }
+//    }
+
+//
+//    @GetMapping(params = "batchId")
+//    public ResponseEntity<?> getBatchById(@RequestParam(required = false) Integer batchId) {
+//        try {
+//            if (batchId == null) {
+//                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is Missing: batchId", null);
+//            }
+//            Batches batch = batchService.getBatchById(batchId);
+//            if (batch != null) {
+//                Map<String, Object> batchDetails = new HashMap<>();
+//                batchDetails.put("batchId", batch.getBatchId());
+//                batchDetails.put("batchName", batch.getBatchName());
+//                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batchId));
+//                List<Map<String, Object>> batchList = new ArrayList<>();
+//                batchList.add(batchDetails);
+//                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
+//            } else {
+//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
+//            }
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
+//        }
+//    }
+//
+//
+//    @GetMapping(params = "batchName")
+//    public ResponseEntity<?> getBatchByName(@RequestParam(required = false) String batchName) {
+//        try {
+//            if (batchName == null || batchName.isEmpty()) {
+//                return ResponseBuilder.buildResponse(400, "Bad Request", "Required field is missing: batchName", null);
+//            }
+//            Batches batch = batchService.getBatchByName(batchName);
+//            if (batch != null) {
+//                Map<String, Object> batchDetails = new HashMap<>();
+//                batchDetails.put("batchId", batch.getBatchId());
+//                batchDetails.put("batchName", batch.getBatchName());
+//                batchDetails.put("participantCount", batchParticipantsService.countParticipantsByBatchId(batch.getBatchId()));
+//                List<Map<String, Object>> batchList = new ArrayList<>();
+//                batchList.add(batchDetails);
+//                return ResponseBuilder.buildResponse(200, "Success", null, batchList);
+//            } else {
+//                return ResponseBuilder.buildResponse(404, "Batch not found", "Batch not found", null);
+//            }
+//        } catch (Exception e) {
+//            return ResponseBuilder.buildResponse(500, "Error occurred while retrieving batch", e.getMessage(), null);
+//        }
+//    }
 
 
     @PostMapping

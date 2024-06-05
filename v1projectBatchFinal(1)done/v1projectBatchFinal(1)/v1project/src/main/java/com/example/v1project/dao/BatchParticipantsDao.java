@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface BatchParticipantsDao extends JpaRepository<BatchParticipants, Long> {
     List<BatchParticipants> findByBatches_BatchId(long batchId);
-    List<BatchParticipants> findByBatches_BatchIdAndUsers_UserId(long batchId, long userId);
-    void deleteByBatches_BatchIdAndUsers_UserId(long batchId, long userId);
+    List<BatchParticipants> findByBatches_BatchIdAndUserId(long batchId, long userId);
+    void deleteByBatches_BatchIdAndUserId(long batchId, long userId);
     int countByBatches_BatchId(long batchId);
-    int countByBatchesBatchIdAndUsersUserId(int batchId, int userId);
-    boolean existsByBatchesBatchIdAndUsersUserId(int batchId, int userId);
+    int countByBatchesBatchIdAndUserId(int batchId, int userId);
+    boolean existsByBatchesBatchIdAndUserId(int batchId, int userId);
 }

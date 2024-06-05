@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.lang.Integer;
 
 @Entity
 @Table(name = "batches_participants")
@@ -16,16 +17,16 @@ public class BatchParticipants {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+//    @JoinColumn(name = "user_id", nullable = false)
+    @Column
+    private Integer userId;
 
     @ManyToOne
     @JoinColumn(name = "batch_id", nullable = false)
     private Batches batches;
 
-    public BatchParticipants(int userId, int batchId) {
-        this.users = new Users(userId);
-        this.batches = new Batches(batchId);
-    }
+//    public BatchParticipants(int userId, int batchId) {
+//        this.users = new Users(userId);
+//        this.batches = new Batches(batchId);
+//    }
 }
